@@ -11,6 +11,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "categorias")
@@ -21,21 +24,16 @@ public class Categoria {
     private Long id;
 	
 	@Column(name = "nombre", nullable = false)
+	@NotNull      
+	@NotBlank(message = "El nombre de usuario no puede estar vacío")      
+	@Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres") 
     private String nombre;
 	
 	@Column(name = "descripcion", nullable = false)
     private String descripcion;
 	
-	@OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Producto> productos = new ArrayList<>();
-	
-	public Categoria() {}
-	
-	public Categoria(Long id, String nombre, String descripcion, List<Producto> productos) {
-	        this.id = id;
-	        this.nombre = nombre;
-	        this.descripcion = descripcion;
-	        this.productos = productos;
+	public Categoria() {
+		
 	}
 	
 	public Long getId() {
@@ -61,14 +59,6 @@ public class Categoria {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-
-	public List<Producto> getProductos() {
-		return productos;
-	}
-
-	public void setProductos(List<Producto> productos) {
-		this.productos = productos;
-	}
     
   
 }
