@@ -32,6 +32,10 @@ public class Categoria {
 	@Column(name = "descripcion", nullable = false)
     private String descripcion;
 	
+	// Relación inversa: una categoría puede tener muchos productos      
+	@OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)      
+	private List<Producto> productos; 
+	
 	public Categoria() {
 		
 	}
@@ -59,6 +63,14 @@ public class Categoria {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
+	public List<Producto> getProductos() {
+		return productos;
+	}
+
+	public void setProductos(List<Producto> productos) {
+		this.productos = productos;
+	}
     
-  
+    
 }

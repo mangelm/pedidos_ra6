@@ -26,6 +26,10 @@ public class Producto {
     @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
     
+    // Relación: muchos productos pueden pertenecer a una sola categoría    
+    @ManyToOne    
+    @JoinColumn(name = "categoria_id", nullable = false)    
+    private Categoria categoria; 
     
     public Producto() {
     	
@@ -71,6 +75,16 @@ public class Producto {
     public void setStock(Integer stock) {
         this.stock = stock;
     }
+
+
+	public Categoria getCategoria() {
+		return categoria;
+	}
+
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
     
 }
 

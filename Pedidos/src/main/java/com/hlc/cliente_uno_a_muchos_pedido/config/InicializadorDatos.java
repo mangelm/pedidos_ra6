@@ -88,6 +88,15 @@ public class InicializadorDatos implements CommandLineRunner {
                 producto.setDescripcion(faker.lorem().sentence());
                 producto.setPeso(faker.number().randomDouble(2, 1, 5));
                 producto.setStock(faker.number().numberBetween(10, 100));
+                
+             // Obtenemos la categoría elegida
+             // Usamos faker para generar un índice aleatorio entre 0 y (categoriasUnicas.size() - 1)
+             int indiceAleatorio = faker.random().nextInt(0, categoriasUnicas.size() - 1);                
+             Categoria categoriaAleatoria = categoriasUnicas.get(indiceAleatorio);
+
+             // Asignamos al producto
+             producto.setCategoria(categoriaAleatoria);
+                
                 productos.add(producto);
             }
             productoRepository.saveAll(productos); // Guardar todos los productos de una vez
