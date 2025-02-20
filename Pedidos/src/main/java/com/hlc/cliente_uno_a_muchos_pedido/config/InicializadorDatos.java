@@ -4,9 +4,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -14,9 +17,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.javafaker.Faker;
+import com.hlc.cliente_uno_a_muchos_pedido.entidad.Categoria;
 import com.hlc.cliente_uno_a_muchos_pedido.entidad.Cliente;
 import com.hlc.cliente_uno_a_muchos_pedido.entidad.Pedido;
 import com.hlc.cliente_uno_a_muchos_pedido.entidad.Producto;
+import com.hlc.cliente_uno_a_muchos_pedido.repositorio.CategoriaRepository;
 import com.hlc.cliente_uno_a_muchos_pedido.repositorio.ClienteRepository;
 import com.hlc.cliente_uno_a_muchos_pedido.repositorio.PedidoRepository;
 import com.hlc.cliente_uno_a_muchos_pedido.repositorio.ProductoRepository;
@@ -37,6 +42,9 @@ public class InicializadorDatos implements CommandLineRunner {
 
     @Autowired
     private ProductoRepository productoRepository;
+    
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
     private final Faker faker = new Faker(new Locale("es"));
 
@@ -46,7 +54,33 @@ public class InicializadorDatos implements CommandLineRunner {
     public void run(String... args) {
         try {
             logger.info("🔄 Iniciando la carga de datos...");
-
+            
+            //Creo las categorias     
+            List<Categoria> categorias = new ArrayList<>();                      
+            for (int i = 0; i < 10; i++) {             
+            	Categoria categoria = new Categoria();             
+            	categoria.setNombre(faker.color().name());             
+            	categoria.setDescripcion(faker.lorem().sentence());             
+            	categorias.add(categoria);                         
+            } 
+            
+            //Para eliminar los nombres repetidos            
+            Set<String> nombresVistos = new HashSet<>();
+            List<Categoria> categoriasUnicas = categorias.stream()
+            		.filter(categoria -> nombresVistos.add(categoria.getNombre()))
+            		.collect(Collectors.toList()); 
+            
+            // Guardar todas las categorias de una vez
+            categoriaRepository.saveAll(categoriasUnicas);
+            categoriaRepository.flush(); 
+            
+            // Comprobar            
+            if(categoriaRepository.findAll().size()>0) {           
+            	logger.info(" ✅ Categorias creadas y guardadas en la base de datos.");            
+            }else{ 
+            	logger.error(" ❌ Error durante la inicialización de datos: {}", "categoriaRepository");            
+            } 
+            
             List<Producto> productos = new ArrayList<>();
             for (int i = 0; i < 10; i++) {
                 Producto producto = new Producto();
@@ -112,4 +146,6 @@ public class InicializadorDatos implements CommandLineRunner {
             e.printStackTrace();
         }
     }
+    
+    
 }
