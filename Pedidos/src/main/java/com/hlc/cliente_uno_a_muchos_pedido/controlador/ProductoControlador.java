@@ -20,6 +20,7 @@ public class ProductoControlador {
     private static final String REDIRECT_LISTADO = "redirect:/productos";
     private static final String VISTA_LISTA = "productos/lista";
     private static final String VISTA_DETALLE = "productos/detalle";
+    private static final String LISTA_CATEGORIAS = "categorias/lista"; 
 
     @Autowired
     private ProductoServicio productoServicio;
@@ -72,4 +73,35 @@ public class ProductoControlador {
         productoServicio.eliminarProducto(id);
         return REDIRECT_LISTADO;
     }
+    
+    /**     
+     * * Muestra la vista de categorías con un listado de productos,     
+     * * filtrados en base al nombre de la categoría si se especifica.     
+     * *     * <p>     *     
+     * Si el parámetro <strong>nombre</strong> no es nulo ni está en blanco,     
+     * *     se busca la categoría correspondiente y se obtienen sus productos     
+     * *     para mostrarlos en la vista LISTA_CATEGORIAS. Si el parámetro es     
+     * *     nulo o está vacío, se redirige a la vista del listado general.     
+     * * </p>     *     
+     * * @param model            
+     * El modelo de datos para la vista.     
+     * * @param nombre_categoria Valor opcional del nombre de la categoría a buscar.     
+     * * @return La vista LISTA_CATEGORIAS con los productos encontrados, o     
+     * * un redirect a REDIRECT_LISTADO si no se especifica un nombre.     
+     * */ 
+    @GetMapping("/categoria")    
+    public String mostrarListadoCategorias(
+        Model model,            
+        @RequestParam(value = "nombre", required = false) String nombre_categoria
+    ) {        
+        if (nombre_categoria != null && !nombre_categoria.isBlank()) {
+            System.out.println(nombre_categoria);            
+            List<Producto> productos = productoServicio.buscarPorNombreCategoria(nombre_categoria);            
+            model.addAttribute("productos", productos);            
+            return LISTA_CATEGORIAS;         
+        } else {            
+            return REDIRECT_LISTADO;        
+        }   
+    }
+
 }
